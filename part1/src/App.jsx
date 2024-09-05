@@ -5,20 +5,37 @@ import viteLogo from '/vite.svg'
 const Header = (props) => {
   return (
     <div>
+      <h1>
+        {props.course}
+      </h1>
+    </div>
+  )
+}
+
+const Content = (props) => {
+  return (
+    <div>
+      <p>
+        {props.part1} {props.exercise1}
+      </p>
+      <p>
+        {props.part2} {props.exercise2}
+      </p>
+      <p>
+        {props.part3} {props.exercise3}
+      </p>
+    </div>
+  )
+}
+
+const Total = (props) => {
+  return (
+    <div>
       <p>
         {props.course}
       </p>
     </div>
   )
-
-}
-
-const Content = (props) => {
-
-}
-
-const Total = (props) => {
-
 }
 
 const App = () => {
@@ -33,17 +50,8 @@ const App = () => {
   return (
     <div>
       <Header course={course} />
+      <Content part1={part1} exercise1={exercises1} part2={part2} exercise2={exercises2} part3={part3} exercise3={exercises3}/>
 
-      <h1>{course}</h1>
-      <p>
-        {part1} {exercises1}
-      </p>
-      <p>
-        {part2} {exercises2}
-      </p>
-      <p>
-        {part3} {exercises3}
-      </p>
       <p>Number of exercises {exercises1 + exercises2 + exercises3}</p>
     </div>
   )
