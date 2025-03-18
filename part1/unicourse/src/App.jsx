@@ -1,124 +1,6 @@
-/*import { useState } from 'react'
-
-const Botao = ({ onClick, texto }) => <button onClick={onClick}>{texto}</button>
-
-const Exibir = ({ contador }) => <div>{contador}</div>
-const Hello = ({nome, idade}) => {
-  const anoDeNascimento = () => {
-    const anoDeHoje = new Date().getFullYear()
-    return anoDeHoje - idade
-  }
-
-  return (
-    <div>
-      <p>
-        Olá {nome}, você tem {idade} anos.
-      </p>
-
-      <p>Então, você nasceu provavelmente em {anoDeNascimento()}.</p>
-    </div>
-  )
-}
-
-const App = () => {
-  const [cliques, setCliques] = useState({ 
-    esquerda: 0, direita: 0
-  })
-
-  const handleCliqueEsquerda = () => {
-    const novosCliques = { 
-      esquerda: cliques.esquerda + 1, 
-      direita: cliques.direita 
-    }
-    setCliques(novosCliques)
-  }
-
-  const handleCliqueDireita = () => {
-    const novosCliques = { 
-      esquerda: cliques.esquerda, 
-      direita: cliques.direita + 1 
-    }
-    setCliques(novosCliques)
-  }
-
-  return (
-    <div>
-      {cliques.esquerda}
-      <button onClick={handleCliqueEsquerda}>Esquerda</button>
-      <button onClick={handleCliqueDireita}>Direita</button>
-      {cliques.direita}
-    </div>
-  )
-}
-
-const nome = 'Peter'
-  const idade = 10
-
-  const [ contador, setContador ] = useState(0)
-
-  setTimeout(
-    () => setContador(contador + 1),
-    1000
-  )
-  console.log('renderizando...', contador)
-
-  return (
-    <div>
-      <h1>Olá a todos!</h1>
-      <Hello nome="Maya" idade={26 + 10} />
-      <Hello nome={nome} idade={contador} />
-    </div>
-  )
-}*/
-
-  /*const [esquerda, setEsquerda] = useState(0)
-  const [direita, setDireita] = useState(0)
-  const [todosOsCliques, setTodos] = useState([])
-
-  const handleCliqueEsquerda = () => {
-    todosOsCliques.push('E')
-    setTodos(todosOsCliques)
-    setEsquerda(esquerda + 1)
-  }
-  const handleCliqueDireita = () => {
-    setDireita(direita + 1)
-  }
-
-  const arto = {
-    nome: 'Arto Hellas',
-    idade: 35,
-    educacao: 'PhD',
-    cumprimentar: function() {
-      console.log('olá, meu nome é ' + this.nome)
-    },
-  
-    fazerAdicao: function(a, b) { // *fazerAdição
-      console.log(a + b)
-    },
-    
-  }
-  
-  arto.fazerAdicao(1, 4)        // 5 é impresso
-  
-  const referenciaParaAdicao = arto.fazerAdicao
-  referenciaParaAdicao(10, 15)   // 25 é impresso
-
-  return (
-    <div>
-      {esquerda}
-      <button onClick={handleCliqueEsquerda}>Esquerda</button>
-      <button onClick={handleCliqueDireita}>Direita</button>
-      <p>{todosOsCliques.join(' ')}</p>
-    </div>
-  )
-}*/
 import { useState } from 'react'
 
 const Average = ({props, all}) => {
-  /*if (all === 0) {
-    return <p>No feedback given yet</p>;
-  }*/
-
   const sum = props.reduce((partialSum, a) => partialSum + a, 0);
   const average = (sum / all) * 100;
 /* 
@@ -126,10 +8,17 @@ const Average = ({props, all}) => {
   console.log(sum)
   console.log(all)
 */
-
   return (
     <p>      
       average {average} %
+    </p>
+  )
+}
+
+const StatisticLine = ({ text, value }) => {
+  return (
+    <p>
+      {text} {value}
     </p>
   )
 }
@@ -142,10 +31,11 @@ const Statistics = ({ good, neutral, bad, all}) => {
     <div>
       <h1>statistics</h1>
 
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {all}</p>
+
+      <StatisticLine text="good" value ={good} />
+      <StatisticLine text="neutral" value ={neutral} />
+      <StatisticLine text="bad" value ={bad} />
+      <StatisticLine text="all" value ={all} />
 
       <Average props={[good,0,-bad]} all={all}/>
 
