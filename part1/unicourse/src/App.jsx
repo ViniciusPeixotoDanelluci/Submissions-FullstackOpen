@@ -135,6 +135,9 @@ const Average = ({props, all}) => {
 }
 
 const Statistics = ({ good, neutral, bad, all}) => {
+  if (all === 0) {
+    return <p>No feedback given yet</p>;
+  }
   return (
     <div>
       <h1>statistics</h1>
