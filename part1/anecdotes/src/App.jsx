@@ -6,6 +6,19 @@ const Button = ({handleClick, text}) => {
   )
 }
 
+const MostVotedAnecdote = ({anecdotes, votes}) => {
+  /*indexOf returns the index of the first occurrence of the max value in the array*/
+  /*Math.max() returns the largest value among the spreaded arguments*/
+  console.log(Math.max(...votes))
+  return (
+    <>
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[votes.indexOf(Math.max(...votes))]}</p> 
+      <p>has {Math.max(...votes)} votes</p>
+    </>
+  )
+}
+
 function App() {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -34,11 +47,13 @@ function App() {
 
   return (
     <>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <p>has {votes[selected]} votes</p>
       <Button handleClick={handleAnecdotes} text="Show random anecdote"/>
       
       <Button handleClick={handleVote} text="Vote"/>
+      <MostVotedAnecdote anecdotes={anecdotes} votes={votes}/>
     </>
   )
 }
