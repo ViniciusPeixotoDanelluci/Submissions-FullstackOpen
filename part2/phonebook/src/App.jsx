@@ -13,9 +13,11 @@ const App = () => {
       name: newPerson,
       id: persons.length + 1,
     }
-  
-    setPersons(persons.concat(nameObject))
-    setNewPerson('')
+
+    //checks if atleast one element in the array is already in the phonebook
+    persons.some(person => person.name === newPerson)
+      ? alert(`${newPerson} was added already.`)
+      : (setPersons(persons.concat(nameObject)), setNewPerson(''))
   }
 
   const handleNoteChange = (event) => {
