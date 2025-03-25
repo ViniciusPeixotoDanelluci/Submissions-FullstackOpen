@@ -10,6 +10,8 @@ const App = () => {
 console.log(persons[0].number)
   const [newPerson, setNewPerson] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [showPerson, setShowPerson] = useState(true)
+  const [filterPerson, setFilterPerson] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -35,11 +37,34 @@ console.log(persons[0].number)
   const handleNumberUpdate = (event) => {
     setNewNumber(event.target.value)
   }
+  const personsToShow = filterPerson
+    ? persons.filter(p => p.name.toLowerCase().includes(filterPerson.toLowerCase()))
+    : persons
+  
+  const handlePersonSearch = (event) => {
+    //filterPerson = event.target.value // It has the asynchronous problem from the part1
+    
+    const attFilterPerson = event.target.value
+
+    setFilterPerson(attFilterPerson)
+    console.log("filter Person:", filterPerson)
+
+    console.log("att filter Person:", attFilterPerson)
+    console.log(personsToShow)
+  }
+
   return (
     <div>
       <div>Debug: {newPerson} {newNumber}</div>
       <h2>Phonebook</h2>
       <form onSubmit={addPerson}>
+        <div>
+          filter: <input
+            value={filterPerson}
+            onChange={handlePersonSearch}
+          />
+        </div>
+        <h2>Add New</h2>
         <div>
           name: <input 
             value={newPerson}
@@ -58,7 +83,7 @@ console.log(persons[0].number)
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map(person => 
+        {personsToShow.map(person => 
           <li key={person.id}>{person.name} {person.number}</li>
         )}
       </ul>
