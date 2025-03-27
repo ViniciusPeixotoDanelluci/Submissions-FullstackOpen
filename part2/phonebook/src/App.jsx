@@ -1,22 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
-const Filter = ({ filterPerson, setFilterPerson}) => { 
-  const handlePersonSearch = (event) => {
-    //setFilterPerson(event.target.value) // It has the asynchronous problem from the part1
-    
-    const attFilterPerson = event.target.value
-    setFilterPerson(attFilterPerson)
-  }
-
-  return (
-    <div>
-      filter: <input
-        value={filterPerson}
-        onChange={handlePersonSearch}
-      />
-    </div>
-  )
-}
+import Filter from './components/Filter'
 
 const PersonForm = ({persons, setPersons}) => {
   const [newPerson, setNewPerson] = useState('')
@@ -86,12 +71,24 @@ const Persons = ({ personsToShow }) => {
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+  /*{ name: 'Arto Hellas', number: '040-123456', id: 1 },
     { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ]) 
+  */]) 
 
+  const hook = () => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }
+  useEffect(hook, [])
+
+  console.log('render', persons.length, 'persons')
   const [filterPerson, setFilterPerson] = useState('')
 
   const personsToShow = filterPerson
