@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import fetchPersonData from './services/personData'
 import Filter from './components/Filter'
-import axios from 'axios'
+import ErrorNotification from './components/ErrorNotification'
 
 const PersonForm = ({persons, setPersons}) => {
   const [newPerson, setNewPerson] = useState('')
@@ -102,6 +102,7 @@ const App = () => {
     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   */]) 
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const hook = () => {
     fetchPersonData
@@ -127,22 +128,27 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
         })
-        .catch(error => {
-          console.error(`Error deleting person:`, error)
-          alert(`The person '${personToDelete.name}' was already deleted from the server.`)
+        .catch((error) => {
+          setErrorMessage(
+            `'${personToDelete.name}' was already removed from server`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
           setPersons(persons.filter(person => person.id !== id))
-        })
+        })        
+
     }}
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <ErrorNotification message={errorMessage} />
       <Filter filterPerson={filterPerson} setFilterPerson={setFilterPerson}/>
 
       <h2>Add New</h2>
       <PersonForm persons={persons} setPersons={setPersons}/>
       
-      <p>Formulario componentizado:</p>
       <h2>Numbers</h2>
       <Persons personsToShow={personsToShow} handleDelete={handleDelete}/>
     </div>
