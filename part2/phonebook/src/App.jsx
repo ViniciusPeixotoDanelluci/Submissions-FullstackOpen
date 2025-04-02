@@ -17,7 +17,8 @@ const PersonForm = ({persons, setPersons}) => {
     const personObject = {
       name: newPerson,
       number: newNumber,
-      id: persons.length + 1,
+      //id: persons.length + 1, 
+      //its better to let the backend to create the id 
     }
   
     //checks if atleast one element in the array is already in the phonebook
@@ -60,11 +61,14 @@ const PersonForm = ({persons, setPersons}) => {
   )
 }
 
-const Persons = ({ personsToShow }) => { 
+const Persons = ({ personsToShow, handleDelete }) => { 
   return (
     <ul>
       {personsToShow.map(person => 
-        <li key={person.id}>{person.name} {person.number}</li>
+        <li key={person.id}>
+          {person.name} {person.number}
+          <button onClick={() => handleDelete(person.id)}>delete</button>
+        </li>
       )}
     </ul>
   )
@@ -94,6 +98,21 @@ const App = () => {
     ? persons.filter(p => p.name.toLowerCase().includes(filterPerson.toLowerCase()))
     : persons
 
+  const handleDelete = (id) => {
+    const personToDelete = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${personToDelete.name}?`)) {
+      fetchPersonData
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch(error => {
+          console.error(`Error deleting person:`, error)
+          alert(`The person '${personToDelete.name}' was already deleted from the server.`)
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }}
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -104,7 +123,7 @@ const App = () => {
       
       <p>Formulario componentizado:</p>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} handleDelete={handleDelete}/>
     </div>
   )
 }
