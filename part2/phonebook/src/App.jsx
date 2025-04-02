@@ -14,24 +14,45 @@ const PersonForm = ({persons, setPersons}) => {
       return
     }
   
-    const personObject = {
-      name: newPerson,
-      number: newNumber,
-      //id: persons.length + 1, 
-      //its better to let the backend to create the id 
+    const existingPerson = persons.find(person => person.name === newPerson)
+
+    if (existingPerson) {
+      // Ask for confirmation to update the number
+      if (window.confirm(`${newPerson} is already in the phonebook, replace the old number with a new one?`)) {
+        const updatedPerson = { ...existingPerson, number: newNumber }
+  
+        fetchPersonData
+          .update(existingPerson.id, updatedPerson)
+          .then((returnedPerson) => {
+            setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson))
+            setNewPerson('')
+            setNewNumber('')
+          })
+          .catch(error => {
+            alert(`The person '${newPerson}' was already deleted from the server.`)
+            setPersons(persons.filter(person => person.id !== existingPerson.id))
+          })
+      }
+    } else {
+
+      const personObject = {
+        name: newPerson,
+        number: newNumber,
+        //id: persons.length + 1, 
+        //its better to let the backend to create the id 
+      }
+    
+      //checks if atleast one element in the array is already in the phonebook
+      persons.some(person => person.name === newPerson || person.number === newNumber)
+        ? alert(`name or number was added already.`)
+        : fetchPersonData.create(personObject).then((returnedPerson) => {
+            setPersons(persons.concat(returnedPerson))
+            setNewPerson('')
+            setNewNumber('')
+        }
+      )}
     }
   
-    //checks if atleast one element in the array is already in the phonebook
-    persons.some(person => person.name === newPerson || person.number === newNumber)
-      ? alert(`name or number was added already.`)
-      : fetchPersonData.create(personObject).then((returnedPerson) => {
-          setPersons(persons.concat(returnedPerson))
-          setNewPerson('')
-          setNewNumber('')
-      }
-    )
-  }
-
   const handleNameUpdate = (event) => {
     setNewPerson(event.target.value)
   }
