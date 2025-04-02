@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import fetchPersonData from '../services/personData'
 
-const PersonForm = ({persons, setPersons}) => {
+const PersonForm = ({persons, setPersons, showSuccessNotification}) => {
   const [newPerson, setNewPerson] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -25,6 +25,7 @@ const PersonForm = ({persons, setPersons}) => {
             setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson))
             setNewPerson('')
             setNewNumber('')
+            showSuccessNotification(`Updated ${newPerson}'s number`)
           })
           .catch(error => {
             alert(`The person '${newPerson}' was already deleted from the server.`)
@@ -32,7 +33,6 @@ const PersonForm = ({persons, setPersons}) => {
           })
       }
     } else {
-
       const personObject = {
         name: newPerson,
         number: newNumber,
@@ -41,15 +41,15 @@ const PersonForm = ({persons, setPersons}) => {
       }
     
       //checks if atleast one element in the array is already in the phonebook
-      persons.some(person => person.name === newPerson || person.number === newNumber)
+      persons.some(person => person.name === newPerson)
         ? alert(`name or number was added already.`)
         : fetchPersonData.create(personObject).then((returnedPerson) => {
             setPersons(persons.concat(returnedPerson))
             setNewPerson('')
             setNewNumber('')
-        }
-      )}
-    }
+            showSuccessNotification(`Added ${newPerson}`)
+    })}
+  }
   
   const handleNameUpdate = (event) => {
     setNewPerson(event.target.value)

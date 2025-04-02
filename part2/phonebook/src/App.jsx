@@ -13,6 +13,7 @@ const App = () => {
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   */]) 
   const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   const hook = () => {
     fetchPersonData
@@ -30,6 +31,13 @@ const App = () => {
     ? persons.filter(p => p.name.toLowerCase().includes(filterPerson.toLowerCase()))
     : persons
 
+    const showSuccessNotification = (message) => {
+      setSuccessMessage(message)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    }
+  
   const handleDelete = (id) => {
     const personToDelete = persons.find(person => person.id === id)
     if (window.confirm(`Delete ${personToDelete.name}?`)) {
@@ -47,17 +55,18 @@ const App = () => {
           }, 5000)
           setPersons(persons.filter(person => person.id !== id))
         })        
-
     }}
 
   return (
     <div>
       <h2>Phonebook</h2>
+      {successMessage && <div className='success'>{successMessage}</div>}
+     
       <ErrorNotification message={errorMessage} />
       <Filter filterPerson={filterPerson} setFilterPerson={setFilterPerson}/>
 
       <h2>Add New</h2>
-      <PersonForm persons={persons} setPersons={setPersons}/>
+      <PersonForm persons={persons} setPersons={setPersons} showSuccessNotification={showSuccessNotification}/>
       
       <h2>Numbers</h2>
       <Persons personsToShow={personsToShow} handleDelete={handleDelete}/>
