@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
-
+import fetchPersonData from './services/personData'
 import Filter from './components/Filter'
+import axios from 'axios'
 
 const PersonForm = ({persons, setPersons}) => {
   const [newPerson, setNewPerson] = useState('')
@@ -14,20 +14,21 @@ const PersonForm = ({persons, setPersons}) => {
       return
     }
   
-    const nameObject = {
+    const personObject = {
       name: newPerson,
       number: newNumber,
       id: persons.length + 1,
     }
   
     //checks if atleast one element in the array is already in the phonebook
-    persons.some(person => person.name === newPerson)
-      ? alert(`${newPerson} was added already.`)
-      : (setPersons(persons.concat(nameObject)), setNewPerson(''))
-
-    persons.some(number => number.name === newNumber)
-      ? alert(`${newNumber} was added already.`)
-      : (setPersons(persons.concat(nameObject)), setNewNumber(''))
+    persons.some(person => person.name === newPerson || person.number === newNumber)
+      ? alert(`name or number was added already.`)
+      : fetchPersonData.create(personObject).then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson))
+          setNewPerson('')
+          setNewNumber('')
+      }
+    )
   }
 
   const handleNameUpdate = (event) => {
@@ -78,13 +79,11 @@ const App = () => {
   */]) 
 
   const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
+    fetchPersonData
+      .getAll()
+      .then((initialPersons) => {
+        setPersons(initialPersons)
+    })
   }
   useEffect(hook, [])
 
