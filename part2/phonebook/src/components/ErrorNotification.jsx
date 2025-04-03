@@ -1,3 +1,4 @@
+import '../index.css'
 
 const ErrorNotification = ({ message }) => {
   if (message === null) {
