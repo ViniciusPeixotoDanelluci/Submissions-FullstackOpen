@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
 import fetchPersonData from '../services/personData'
-import ErrorNotification from './ErrorNotification'
 
 const PersonForm = ({persons, setPersons, showSuccessNotification}) => {
-  const [errorMessage, setErrorMessage] = useState(null)
   const [newPerson, setNewPerson] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -30,12 +28,7 @@ const PersonForm = ({persons, setPersons, showSuccessNotification}) => {
             showSuccessNotification(`Updated ${newPerson}'s number`)
           })
           .catch(error => {
-            setErrorMessage(
-              `The person '${newPerson}' was already deleted from the server.`
-            )
-            setTimeout(() => {
-              setErrorMessage(null)
-            }, 5000)
+            alert(`The person '${newPerson}' was already deleted from the server.`)
             setPersons(persons.filter(person => person.id !== existingPerson.id))
           })
       }

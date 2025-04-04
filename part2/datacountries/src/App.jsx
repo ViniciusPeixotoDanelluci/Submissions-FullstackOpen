@@ -9,21 +9,20 @@ function App() {
   useEffect(() => {
     if (name) {
       axios
-        .get(`https://studies.cs.helsinki.fi/restcountries/api/${name}/`)
+        .get(`https://studies.cs.helsinki.fi/restcountries/api/${name}`)
         .then(response => {
-          console.log(response.data.searchedNames)
           setSearchedNames(response.data.searchedNames)
         })
     }
   }, [name])
 
-  const handleChange = (event) => {
-    const altInputValue = event
+  const handleChange = (e) => {
+    const altInputValue = e.target.value
     setInputValue(altInputValue)
   }
 
-  const onSearch = (event) => {
-    event.preventDefault()
+  const onSearch = (e) => {
+    e.preventDefault()
     setName(inputValue)
   }
 
@@ -31,7 +30,7 @@ function App() {
     <>
       <div>
         <form onSubmit={onSearch}>
-          country name: <input value={inputValue} onChange={e => handleChange(e.target.value)} />
+          country name: <input value={inputValue} onChange={(e) => handleChange(e)} />
           <button type="submit">search: </button>
         </form>
         <pre>

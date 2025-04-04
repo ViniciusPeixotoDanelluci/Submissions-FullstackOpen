@@ -63,23 +63,13 @@ const App = () => {
       {successMessage && <div className='success'>{successMessage}</div>}
      
       <ErrorNotification message={errorMessage} />
-      <Filter 
-        filterPerson={filterPerson} 
-        setFilterPerson={setFilterPerson}
-      />
+      <Filter filterPerson={filterPerson} setFilterPerson={setFilterPerson}/>
 
       <h2>Add New</h2>
-      <PersonForm 
-        persons={persons} 
-        setPersons={setPersons} 
-        showSuccessNotification={showSuccessNotification}
-      />
+      <PersonForm persons={persons} setPersons={setPersons} showSuccessNotification={showSuccessNotification}/>
       
       <h2>Numbers</h2>
-      <Persons 
-        personsToShow={personsToShow} 
-        handleDelete={handleDelete}
-      />
+      <Persons personsToShow={personsToShow} handleDelete={handleDelete}/>
     </div>
   )
 }
