@@ -7,14 +7,6 @@ const PersonForm = ({persons, setPersons, showSuccessNotification}) => {
   const [newPerson, setNewPerson] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
-  //
-  //Remodelar o Add Person pois nao da pra usar o error message aqui 
-  //
-  //a formatação fica errada na tela
-  //
-
-
-
   const addPerson = (event) => {
     event.preventDefault()
     if (newPerson === '' || newNumber === '') {
