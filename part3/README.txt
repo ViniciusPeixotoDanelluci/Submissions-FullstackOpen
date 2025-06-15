@@ -1,0 +1,1 @@
+To propperly run the exercises, use npm install express or npm install
