@@ -1,7 +1,23 @@
 const express = require('express')
+const morgan = require('morgan')
+
 const app = express()
 
+morgan.token('teste', function (request, response) { return request.headers['content-type'] })
+
 app.use(express.json())
+
+app.use(
+  morgan(function (tokens, req, res) {
+    return JSON.stringify({
+      method: tokens.method(req, res),
+      url: tokens.url(req, res),
+      status: parseInt(tokens.status(req, res), 10),
+      responseTime: `${tokens["response-time"](req, res)} ms`,
+    })
+  })
+)
+
 
 let persons = [
   {
@@ -68,6 +84,7 @@ app.post('/api/persons', (request, response) => {
       error: 'name or number missing',
     })
   }
+  
   const newPerson = {
     id: generateId(),
     name: entry.name,
