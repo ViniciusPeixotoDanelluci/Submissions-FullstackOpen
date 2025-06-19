@@ -3,11 +3,26 @@ const morgan = require('morgan')
 
 const app = express()
 
-morgan.token('teste', function (request, response) { return request.headers['content-type'] })
+morgan.token('teste', function (req, res) { return "req.headers['content-type']" })
 
 app.use(express.json())
 
+
 app.use(
+  morgan(function (tokens, req, res) {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, 'content-length'), '-',
+      tokens['response-time'](req, res), 'ms',
+      JSON.stringify(req.body)
+    ].join(' ')
+  })
+)
+
+// Uncomment the following lines to use morgan in a different format
+/*app.use(
   morgan(function (tokens, req, res) {
     return JSON.stringify({
       method: tokens.method(req, res),
@@ -16,8 +31,7 @@ app.use(
       responseTime: `${tokens["response-time"](req, res)} ms`,
     })
   })
-)
-
+)*/
 
 let persons = [
   {
@@ -102,30 +116,6 @@ app.delete('/api/persons/:id', (request, response) => {
 
   response.status(204).end()
 })
-
-/*app.put('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const entry = request.body
-
-  if (!entry.name || !entry.number) {
-    return response.status(400).json({
-      error: 'name or number missing',
-    })
-  }
-
-  const person = persons.find((person) => person.id === id)
-
-  if (!person) {
-    return response.status(404).json({
-      error: 'person not found',
-    })
-  }
-
-  const updatedPerson = { ...person, ...entry }
-  persons = persons.map((p) => (p.id === id ? updatedPerson : p))
-
-  response.json(updatedPerson)
-})*/
 
 const PORT = 3001
 app.listen(PORT, () => {
