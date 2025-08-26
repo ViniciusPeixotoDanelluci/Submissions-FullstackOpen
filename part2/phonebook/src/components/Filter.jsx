@@ -1,6 +1,6 @@
 const Filter = ({ filterPerson, setFilterPerson}) => { 
     const handlePersonSearch = (event) => {
-      //setFilterPerson(event.target.value) // It has the asynchronous problem from the part1
+      //setFilterPerson(event.target.value) //it has the asynchronous problem from the part1
       
       const attFilterPerson = event.target.value
       setFilterPerson(attFilterPerson)
