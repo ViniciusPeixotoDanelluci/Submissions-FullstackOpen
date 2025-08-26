@@ -15,7 +15,7 @@ const PersonForm = ({persons, setPersons, showSuccessNotification}) => {
     const existingPerson = persons.find(person => person.name === newPerson)
 
     if (existingPerson) {
-      // Ask for confirmation to update the number
+      //ask for confirmation to update the number
       if (window.confirm(`${newPerson} is already in the phonebook, replace the old number with a new one?`)) {
         const updatedPerson = { ...existingPerson, number: newNumber }
   
