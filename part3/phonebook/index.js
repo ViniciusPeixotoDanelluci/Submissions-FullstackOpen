@@ -8,6 +8,7 @@ morgan.token('teste', function (req, res) { return "req.headers['content-type']"
 
 app.use(cors())
 app.use(express.json())
+app.use(express.static('dist'))
 app.use(
   morgan(function (tokens, req, res) {
     return [
