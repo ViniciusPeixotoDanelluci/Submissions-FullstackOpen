@@ -1,4 +1,6 @@
+require('dotenv').config()
 const express = require('express')
+const Person = require('./models/person')
 const morgan = require('morgan')
 const cors = require('cors')
 
@@ -22,18 +24,17 @@ app.use(
   })
 )
 
-// Uncomment the following lines to use morgan in a different format
-/*app.use(
-  morgan(function (tokens, req, res) {
-    return JSON.stringify({
-      method: tokens.method(req, res),
-      url: tokens.url(req, res),
-      status: parseInt(tokens.status(req, res), 10),
-      responseTime: `${tokens["response-time"](req, res)} ms`,
-    })
-  })
-)*/
+// Could just do that also
+// app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'))
 
+
+app.get('/api/persons', (request, response) => {
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
+})
+
+/*
 let persons = [
   {
     id: '1',
@@ -55,11 +56,12 @@ let persons = [
     name: "Mary Poppendieck", 
     number: "39-23-6423122"
   }
-]
-
+]*/
+/*
 app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
+*/
 
 app.get('/api/persons/:id', (request, response) => {
   const id = request.params.id
@@ -112,7 +114,7 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
