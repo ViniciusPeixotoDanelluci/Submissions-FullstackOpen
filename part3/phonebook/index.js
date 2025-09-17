@@ -24,9 +24,8 @@ app.use(
   })
 )
 
-// Could just do that also
+// Could just do that also :P
 // app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'))
-
 
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
@@ -56,12 +55,14 @@ let persons = [
     name: "Mary Poppendieck", 
     number: "39-23-6423122"
   }
-]*/
-/*
-app.get('/api/persons', (request, response) => {
-  response.json(persons)
-})
+]
 */
+
+app.get('/api/persons', (request, response) => {
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
+})
 
 app.get('/api/persons/:id', (request, response) => {
   const id = request.params.id
@@ -87,6 +88,7 @@ const generateId = () => {
   return Math.floor(Math.random() * 1000000).toString()
 }
 
+
 app.post('/api/persons', (request, response) => {
   const entry = request.body
   
@@ -96,15 +98,15 @@ app.post('/api/persons', (request, response) => {
     })
   }
   
-  const newPerson = {
+  const newPerson = new Person({
     id: generateId(),
     name: entry.name,
     number: entry.number
-  }
+  })
 
-  persons = persons.concat(newPerson)
-
-  response.json(newPerson)
+  newPerson.save().then(savedEntry => {
+    response.json(savedEntry)
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {

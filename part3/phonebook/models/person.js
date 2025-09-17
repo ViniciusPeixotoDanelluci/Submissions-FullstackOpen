@@ -1,25 +1,35 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
+mongoose.set('strictQuery',false)
 
-if (process.argv.length < 3) {
-  console.log('Give atleast a password as argument')
-  process.exit(1)
-}
-
-const password = process.argv[2]
 const iName = process.argv[3]
 const iNumber = process.argv[4]
 
 const url = process.env.MONGODB_URI
 
-mongoose.set('strictQuery',false)
 mongoose.connect(url)
+ .then(result => {
+    console.log('connected to MongoDB')
+  })
+  .catch(error => {
+    console.log('error connecting to MongoDB:', error.message)
+  })
 
 const personSchema = new mongoose.Schema({
   name: String,
   number: String,
 })
 
+personSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
 const Person = mongoose.model('Person', personSchema)
+module.exports = mongoose.model('Person', personSchema)
 
 if (process.argv.length == 5) {
   const person = new Person({
@@ -45,8 +55,4 @@ if (process.argv.length == 5) {
       })
       mongoose.connection.close()
     })
-} else {
-  console.log('Please provide a name and number as arguments')
-  mongoose.connection.close()
-  process.exit(1)
 }
