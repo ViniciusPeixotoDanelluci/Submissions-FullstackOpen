@@ -1,6 +1,5 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
-mongoose.set('strictQuery',false)
 
 const iName = process.argv[3]
 const iNumber = process.argv[4]
@@ -8,7 +7,7 @@ const iNumber = process.argv[4]
 const url = process.env.MONGODB_URI
 
 mongoose.connect(url)
- .then(result => {
+  .then(result => {
     console.log('connected to MongoDB')
   })
   .catch(error => {
@@ -29,7 +28,6 @@ personSchema.set('toJSON', {
 })
 
 const Person = mongoose.model('Person', personSchema)
-module.exports = mongoose.model('Person', personSchema)
 
 if (process.argv.length == 5) {
   const person = new Person({
@@ -47,7 +45,8 @@ if (process.argv.length == 5) {
       mongoose.connection.close()
     })
 } else if (process.argv.length == 3) {
-  Person.find({})
+  Person
+    .find({})
     .then(result => {
       console.log('phonebook:') 
       result.forEach(person => {
@@ -56,3 +55,5 @@ if (process.argv.length == 5) {
       mongoose.connection.close()
     })
 }
+
+module.exports = mongoose.model('Person', personSchema)
