@@ -1,6 +1,9 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:3001/api/persons'
+
+//const baseUrl = '/api/persons' 
+const baseUrl = 'http://localhost:3001/persons' 
+// Changed the baseUrl to how it was in the last part2 deployment, sorry for the confusion
 
 const getAll = () => {
   const request = axios.get(baseUrl)

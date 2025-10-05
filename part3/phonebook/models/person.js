@@ -15,8 +15,26 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: [3, 'Enter a name at least 3 characters long'],
+    required: true
+  },
+  number: {
+    type: String,
+    minLength: [8, 'Please enter a number at least 8 characters long'],
+    maxLength: [15, 'The phone number must not exceed the maximum of 15 characters'],
+    required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{2,3}-\d+$/.test(v)
+      },
+      message: 'Please insert a valid phone number e.g. 055-45678900'
+    }
+    //validate: { }
+    //regex aqui
+    // LEmbrar de checar se eu to mandando os status de bad request corretos 
+  },
 })
 
 personSchema.set('toJSON', {

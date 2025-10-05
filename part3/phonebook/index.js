@@ -46,7 +46,6 @@ app.get('/api/persons/:id', (request, response, next) => {
   .catch(error => next(error))
 })
 
-
 app.get('/info', (request, response) => {
   //Person.countDocuments({}).then(count => {})
   Person.estimatedDocumentCount({}).then(count => {
@@ -58,9 +57,8 @@ app.get('/info', (request, response) => {
   })
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const entry = request.body
-  
   
   const newPerson = new Person({
     name: entry.name,
@@ -84,22 +82,15 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const {name, number} = request.body
-  
-  Person.findByIdAndUpdate(request.params.id)
+  const { name, number } = request.body
+  const opts = { new: true, runValidators: true }
+
+  Person.findByIdAndUpdate(request.params.id, { name, number }, opts)
     .then(entry => {
       if (!entry) {
         return response.status(404).end()
       }
-
-      entry.name = name
-      entry.number = number
-
-      return entry
-        .save()
-        .then((updatedEntry) => {
-          response.json(updatedEntry)
-        })
+      response.json(entry)
     })
   .catch(error => next(error))
 })
@@ -110,17 +101,29 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint)
 
+// Reminder: the "next" parameter is the "call function" to the ErrorHandler
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-  //console.log(error.name)
 
   if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
-  } else
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  } 
+    let err = { name: '', number: '' }
+    Object.values(error.errors).forEach(({ properties }) => {
+      err[properties.path] = properties.message
+       console.log('err is', err)
+      // console.log('properties is', properties)
+    })
 
+    const errorMessage = Object.values(error.errors)
+                  .map(({ properties }) => properties.message)
+                  .filter(msg => msg !== '').join(' | ')
+
+    // console.log(error)
+    // console.log(errorMessage)
+    // It was a fun challenge to figure it out how to do make this message work
+    return response.status(400).json(errorMessage)
+    //return response.status(400).json(['ValidationError:', err.name, ' ', err.number])
+  } else if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
   next(error)
 }
 
