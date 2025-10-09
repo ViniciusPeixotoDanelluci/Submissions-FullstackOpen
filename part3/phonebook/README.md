@@ -1,12 +1,22 @@
-#Fullstackopen exercises - Part 3
+# Fullstackopen exercises - Part 3
 
-##Setup
-Follow these steps to run the application:
+Contains the React application developed for the part 3 of Fullstack Open course.
+
+### Features
+- Add, update, and delete contacts
+- Search/filter contacts by name
+- Error notifications for duplicate entries, server issues and bad formatting
+- Uses a online server for the backend with [MongoDB Atlas](https://www.mongodb.com/) service
+
+### Setup
+Follow these steps to run the application on your machine:
+
 1. Download or clone this repository 
-2. run ```npm install --save-dev nodemon```
-3. run ```npm run dev``` or ```npm start```
+3. Create a .env file and then create the variables `MONGODB_URI` and `PORT`, with your own MongoDB link and the number 3001, respectively
+2. run ```npm install```
+4. run ```npm run dev``` or ```npm start```
 
-link to deployed backend: 
-- (https://submissions-fullstackopen-test.onrender.com/api/persons)
+link to the project, deployed on [Render](https://render.com/): 
+- (https://submissions-fullstackopen-test.onrender.com)
 
 By Vinicius Peixoto Danelluci

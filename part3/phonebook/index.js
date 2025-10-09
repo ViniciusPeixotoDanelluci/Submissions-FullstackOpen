@@ -43,7 +43,7 @@ app.get('/api/persons/:id', (request, response, next) => {
         response.status(404).end()
       }
     })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.get('/info', (request, response) => {
@@ -59,7 +59,7 @@ app.get('/info', (request, response) => {
 
 app.post('/api/persons', (request, response, next) => {
   const entry = request.body
-  
+
   const newPerson = new Person({
     name: entry.name,
     number: entry.number
@@ -70,12 +70,12 @@ app.post('/api/persons', (request, response, next) => {
     .then(savedEntry => {
       response.json(savedEntry)
     })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -92,7 +92,7 @@ app.put('/api/persons/:id', (request, response, next) => {
       }
       response.json(entry)
     })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
@@ -108,17 +108,18 @@ const errorHandler = (error, request, response, next) => {
     let err = { name: '', number: '' }
     Object.values(error.errors).forEach(({ properties }) => {
       err[properties.path] = properties.message
-       console.log('err is', err)
+      console.log('err is', err)
       // console.log('properties is', properties)
     })
 
+    // Sort and unifies the error messages from the returned Error object
     const errorMessage = Object.values(error.errors)
-                  .map(({ properties }) => properties.message)
-                  .filter(msg => msg !== '').join(' | ')
+      .map(({ properties }) => properties.message)
+      .filter(msg => msg !== '').join(' | ')
 
     // console.log(error)
     // console.log(errorMessage)
-    // It was a fun challenge to figure it out how to do make this message work
+    // It was a fun challenge to figure it out how to make this message work
     return response.status(400).json(errorMessage)
     //return response.status(400).json(['ValidationError:', err.name, ' ', err.number])
   } else if (error.name === 'CastError') {
