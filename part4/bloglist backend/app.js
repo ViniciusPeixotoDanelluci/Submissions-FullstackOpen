@@ -10,7 +10,6 @@ const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
 
 const cors = require('cors')
-//require('dotenv').config()
 
 logger.info('connecting to', config.MONGODB_URI)
 

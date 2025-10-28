@@ -1,18 +1,22 @@
-require('dotenv').config()
+//require('dotenv').config()
 const mongoose = require('mongoose')
 
 const blogSchema = new mongoose.Schema({
   title: {
-    type: String
+    type: String,
+    required: true,
+    minLength: [3, 'Enter a title at least 3 characters long']
   },
   author: {
-    type: String
+    type: String,
+    required: true,
   },
   url: {
-    type: String
+    type: String,
+    required: true,
   },
   likes: {
-    type: Number
+    type: Number,
   },
   /*name: {
     type: String,

@@ -19,7 +19,7 @@ const errorHandler = (error, request, response, next) => {
     let err = { name: '', number: '' }
     Object.values(error.errors).forEach(({ properties }) => {
       err[properties.path] = properties.message
-      console.log('err is', err)
+      //console.log('err is', err)
     })
     const errorMessage = Object.values(error.errors)
       .map(({ properties }) => properties.message)

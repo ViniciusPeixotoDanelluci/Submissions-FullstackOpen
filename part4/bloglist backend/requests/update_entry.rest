@@ -1,7 +1,9 @@
-PUT http://localhost:3001/api/persons/68cefdd5a214b74235a72de1
+PUT http://localhost:3003/api/blogs/68cefdd5a214b74235a72de1
 Content-Type: application/json
 
 {
-    "name": "Jorge Magnifico",
-    "number": "022-1250689"
+    "title": "Jorge Magnifico",
+    "author": "Jorges Bens",
+    "url": "http://www.naji.com",
+    "likes": 7
 }
