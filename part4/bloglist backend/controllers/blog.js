@@ -51,7 +51,7 @@ blogsRouter.put('/:id', (request, response, next) => {
       }
       response.json(entry)
     })
-    .catch(error => next(error))
+  .catch(error => next(error))
 })
 
 module.exports = blogsRouter
