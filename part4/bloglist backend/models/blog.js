@@ -18,6 +18,10 @@ const blogSchema = new mongoose.Schema({
   likes: {
     type: Number,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
   /*name: {
     type: String,
     minLength: [3, 'Enter a name at least 3 characters long'],

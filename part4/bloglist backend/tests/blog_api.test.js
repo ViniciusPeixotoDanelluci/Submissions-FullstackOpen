@@ -56,9 +56,9 @@ describe('requesting a specific blog post', () => {
 describe('requesting a new blog post', () => {
   test('a valid blog can be added', async () => {
     const newBlog = {
-      title: "Capitães da Areia",
-      author: "Jorges Amado",
-      url: "http://www.joramado.com.br",
+      title: 'Capitães da Areia',
+      author: 'Jorges Amado',
+      url: 'http://www.joramado.com.br',
     }
 
     await api
@@ -77,7 +77,7 @@ describe('requesting a new blog post', () => {
   })
   test('an invalid blog can not be added', async () => {
     const newBlog = {
-      title: "O",
+      title: 'O',
     }
     await api
       .post('/api/blogs')
@@ -129,9 +129,9 @@ describe('updating a blog', () => {
   test('fails with status 404 if id is invalid', async () => {
     const invalID = await helper.nonExistingId()
     const updatedBlog = {
-      title: "Invalidados: A Serie Divergente",
-      author: "Carlos Prestes",
-      url: "http://joaquim.com",
+      title: 'Invalidados: A Serie Divergente',
+      author: 'Carlos Prestes',
+      url: 'http://joaquim.com',
       likes: 3
     }
 
@@ -141,7 +141,6 @@ describe('updating a blog', () => {
       .expect(404)
   })
 })
-
 
 after(async () => {
   await mongoose.connection.close()

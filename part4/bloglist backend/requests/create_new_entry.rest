@@ -5,6 +5,6 @@ Content-Type: application/json
     "title": "Najime",
     "author": "Jorges Bens",
     "url": "http://www.naji.com",
-    "likes": 15
+    "likes": 15,
+    "userId": "690b51c3d619d0767ffe04c7"
 }
-
