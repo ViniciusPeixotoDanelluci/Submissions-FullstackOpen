@@ -5,16 +5,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    match: [/^\S[\s\S]{4,12}\S$/usg, 
-      'Username must be between 4 and 12 characters long and can`t contain a space at the end/beginning'
+    match: [/^\S[\s\S]{3,12}\S$/us,
+      'Username must be between 3 and 12 characters long and can`t contain a space at the end/beginning'
     ]
-    
   },
   name: {
     type: String,
-    required: true,
-    match: [/^[a-zA-Z ]{2,30}$/us, 
-      'Name must be between 2 and 30 characters long, can contain only letters'
+    match: [/^[\p{L} ]{3,30}$/us, 
+      'Name must be between 3 and 30 characters long, can contain only letters'
     ]
   },
   passwordHash: {
@@ -26,7 +24,7 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Blog'
     }
-  ],
+  ]
 })
 
 userSchema.set('toJSON', {
@@ -40,4 +38,6 @@ userSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('User', userSchema)
+const User = mongoose.model('User', userSchema)
+
+module.exports = User

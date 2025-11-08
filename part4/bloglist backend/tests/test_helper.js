@@ -16,14 +16,6 @@ const initialBlogs = [
   },
 ]
 
-const initialUsers = [
-  {
-    username: 'root',
-    name: 'Jorges Bens',
-    password: 'http://www.naji.com',
-  },
-]
-
 const nonExistingId = async () => {
   const blog = new Blog(
     {
@@ -51,7 +43,6 @@ const usersInDb = async () => {
 
 module.exports = {
   initialBlogs,
-  initialUsers,
   nonExistingId,
   blogsInDb,
   usersInDb,
