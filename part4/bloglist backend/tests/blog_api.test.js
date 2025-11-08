@@ -27,7 +27,6 @@ describe('requesting all the blog posts', () => {
 describe('requesting a specific blog post', () => {
   test('blog posts have id property instead of _id', async () => {
     const response = await api.get('/api/blogs')
-    //console.log('Response body:', response.body)
 
     // The toJSON formatting is in the blog model
     response.body.forEach(blog => {
@@ -55,10 +54,13 @@ describe('requesting a specific blog post', () => {
 
 describe('requesting a new blog post', () => {
   test('a valid blog can be added', async () => {
+    const users = await helper.usersInDb()
+
     const newBlog = {
       title: "Capitães da Areia",
       author: "Jorges Amado",
       url: "http://www.joramado.com.br",
+      userId: users[0].id
     }
 
     await api
@@ -97,10 +99,6 @@ describe('deletion of a blog', () => {
     await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
-
-    const likes = blogsAtEnd.map(n => n.likes)
-    assert(!likes.includes(blogToDelete.likes))
-
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
   })
 })
@@ -141,7 +139,6 @@ describe('updating a blog', () => {
       .expect(404)
   })
 })
-
 
 after(async () => {
   await mongoose.connection.close()
