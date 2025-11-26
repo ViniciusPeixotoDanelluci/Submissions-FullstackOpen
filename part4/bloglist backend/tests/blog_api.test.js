@@ -1,15 +1,17 @@
 const assert = require('node:assert')
 const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const api = supertest(app)
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
+  await Blog.deleteMany()
   await Blog.insertMany(helper.initialBlogs)
 })
 
@@ -19,7 +21,7 @@ describe('requesting all the blog posts', () => {
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
-
+    
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 })
@@ -37,6 +39,7 @@ describe('requesting a specific blog post', () => {
   test('a specific blog can be viewed by its id', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToView = blogsAtStart[0]
+    blogToView.user = blogToView.user.toString()
 
     const resultBlog = await api
       .get(`/api/blogs/${blogToView.id}`)
@@ -45,26 +48,47 @@ describe('requesting a specific blog post', () => {
 
     assert.deepStrictEqual(resultBlog.body, blogToView)
   })
-  test('fails with statuscode 404 id is invalid', async () => {
+  test('fails with statuscode 404 if the id is invalid', async () => {
     const invalidId = await helper.nonExistingId()
-
     await api.get(`/api/blogs/${invalidId}`).expect(404)
   })
 })
 
 describe('requesting a new blog post', () => {
+  beforeEach(async () => {
+    await User.deleteMany()
+
+    const passwordHash = await bcrypt.hash('password', 10)
+    const newTestUser = new User({
+      username: 'Beta Tester',
+      password: 'roge1th2',
+      passwordHash
+    })
+    await User.insertMany(newTestUser)
+  })
+
   test('a valid blog can be added', async () => {
     const users = await helper.usersInDb()
 
     const newBlog = {
-      title: "Capitães da Areia",
-      author: "Jorges Amado",
-      url: "http://www.joramado.com.br",
-      userId: users[0].id
+      title: 'Capitães da Areia',
+      author: 'Jorges Amado',
+      url: 'http://www.joramado.com.br',
+      user: users[0].id
     }
-
+    
+    const us = {
+      username: 'Beta Tester',
+      password: 'password'
+    }
+    
+    const loginUser = await api
+      .post('/api/login')
+      .send(us)
+    
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginUser.body.token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -79,24 +103,96 @@ describe('requesting a new blog post', () => {
   })
   test('an invalid blog can not be added', async () => {
     const newBlog = {
-      title: "O",
+      title: 'O',
     }
+    const us = {
+      username: 'Beta Tester',
+      password: 'password'
+    }
+    const loginUser = await api
+      .post('/api/login')
+      .send(us)
+
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginUser.body.token}`)
       .send(newBlog)
       .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+  test('an unauthorized user cant create a new blog', async () => {
+    const users = await helper.usersInDb()
+
+    const newBlog = {
+      title: 'Capitães da Areia',
+      author: 'Jorges Amado',
+      url: 'http://www.joramado.com.br',
+      user: users[0].id
+    }
+    
+    const us = {
+      username: 'Wrong Tester',
+      password: 'password'
+    }
+    
+    const loginUser = await api
+      .post('/api/login')
+      .send(us)
+    
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginUser.body.token}`)
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   })
 })
 
-describe('deletion of a blog', () => {
+describe.only('deletion of a blog', () => {
+  beforeEach(async () => {
+    await User.deleteMany()
+
+    const passwordHash = await bcrypt.hash('password', 10)
+    const newTestUser = new User({
+      username: 'Beta Tester',
+      password: 'roge1th2',
+      passwordHash
+    })
+    await User.insertMany(newTestUser)
+  })
+  beforeEach(async () => {
+    await Blog.deleteMany()
+
+    const userId = (await User.findOne())._id.toString()
+
+    const bloguinhos = helper.initialBlogs.map(b => ({
+      ...b,
+      user: userId
+    }))
+    await Blog.insertMany(bloguinhos)
+  })
   test('succeeds with status code 204 if id is valid', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+    const us = {
+      username: 'Beta Tester',
+      password: 'password'
+    }
+    const loginUser = await api
+      .post('/api/login')
+      .send(us)
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${loginUser.body.token}`)
+      .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
@@ -123,13 +219,12 @@ describe('updating a blog', () => {
     const updated = blogsAtEnd.find(b => b.id === blogToUpdate.id)
     assert.strictEqual(updated.likes, blogToUpdate.likes + 1)
   })
-
   test('fails with status 404 if id is invalid', async () => {
     const invalID = await helper.nonExistingId()
     const updatedBlog = {
-      title: "Invalidados: A Serie Divergente",
-      author: "Carlos Prestes",
-      url: "http://joaquim.com",
+      title: 'Invalidados: A Serie Divergente',
+      author: 'Carlos Prestes',
+      url: 'http://joaquim.com',
       likes: 3
     }
 

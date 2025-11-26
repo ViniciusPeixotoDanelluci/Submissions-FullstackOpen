@@ -6,13 +6,15 @@ const initialBlogs = [
     title: 'Kojima',
     author: 'Jorges Bens',
     url: 'http://www.naji.com',
-    likes: 2
+    likes: 2,
+    user: '6925f9a706db7d41a2bf89f0'
   },
   {
-    title: 'Kojima',
+    title: 'Kouma',
     author: 'Jorges Bens',
     url: 'http://www.naji.com',
-    likes: 7
+    likes: 7,
+    user: '6925f9a706db7d41a2bf89f0'
   },
 ]
 
@@ -22,7 +24,8 @@ const nonExistingId = async () => {
       title: 'Perdera',
       author: 'Seu Tonho',
       url: 'http://www.orson.com',
-      likes: 9
+      likes: 9,
+      user: '6925f9a706db7d41a2bf89f0'
     }
   )
   await blog.save()
@@ -32,12 +35,12 @@ const nonExistingId = async () => {
 }
 
 const blogsInDb = async () => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find()
   return blogs.map(blog => blog.toJSON())
 }
 
 const usersInDb = async () => {
-  const users = await User.find({})
+  const users = await User.find()
   return users.map(u => u.toJSON())
 }
 

@@ -10,11 +10,11 @@ const api = supertest(app)
 const bcrypt = require('bcrypt')
 
 beforeEach(async () => {
-  await User.deleteMany({})
+  await User.deleteMany()
 
   const passwordHash = await bcrypt.hash('sekret', 10)
   const user = new User({ username: 'agaveita', passwordHash })
-
+ 
   await user.save()
 })
 
@@ -25,7 +25,7 @@ describe('when there is initially one user in db', () => {
     const newUser = {
       username: 'mluukkai',
       name: 'Matti Luukkainen',
-      password: 'salainen',
+      password: 'sala5@inen'
     }
 
     await api
@@ -42,7 +42,7 @@ describe('when there is initially one user in db', () => {
   })
 })
 
-describe.only('creation fails with proper statuscode and message for username', () => {
+describe('creation fails with proper statuscode and message for username', () => {
   test('when username is already taken', async () => {
     const usersAtStart = await helper.usersInDb()
 
@@ -107,7 +107,7 @@ describe.only('creation fails with proper statuscode and message for password', 
       username: 'testar',
     }
 
-    const result = await api
+    await api
       .post('/api/users')
       .send(newUser)
       .expect(400)
@@ -121,11 +121,11 @@ describe.only('creation fails with proper statuscode and message for password', 
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
-      username: 'testoser',
+      username: 'testser',
       password: '12'
     }
 
-    const result = await api
+    await api
       .post('/api/users')
       .send(newUser)
       .expect(400)

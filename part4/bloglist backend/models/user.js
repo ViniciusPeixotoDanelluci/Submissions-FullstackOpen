@@ -5,18 +5,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    match: [/^\S[\s\S]{3,12}\S$/us,
+    match: [/^\S[\s\S]{1,12}\S$/us,
       'Username must be between 3 and 12 characters long and can`t contain a space at the end/beginning'
     ]
   },
   name: {
     type: String,
-    match: [/^[\p{L} ]{3,30}$/us, 
+    match: [/^[\p{L} ]{3,30}$/us,
       'Name must be between 3 and 30 characters long, can contain only letters'
     ]
   },
   passwordHash: {
-    type: String, 
+    type: String,
     required: true
   },
   blogs: [
