@@ -11,14 +11,13 @@ const requestLogger = (request, response, next) => {
     logger.info('Code:', response.statusCode)
     logger.info('---')
   })
-  next() // testar se eu posso tirar o morgan do package json no final da parte 4
+  next()
 }
 
 const tokenExtractor = (request, resonse, next) => {
   const authorization = request.get('authorization')
   if (authorization && authorization.startsWith('Bearer ')) {
     request.token = authorization.replace('Bearer ', '')
-    console.log('chegou até aqui')
   } else {
     request.token = null
   }

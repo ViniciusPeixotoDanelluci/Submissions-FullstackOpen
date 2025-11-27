@@ -1,4 +1,3 @@
-//require('dotenv').config()
 const mongoose = require('mongoose')
 
 const blogSchema = new mongoose.Schema({

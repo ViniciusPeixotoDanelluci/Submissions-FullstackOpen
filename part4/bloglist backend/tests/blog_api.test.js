@@ -169,6 +169,7 @@ describe.only('deletion of a blog', () => {
   beforeEach(async () => {
     await Blog.deleteMany()
 
+
     const userId = (await User.findOne())._id.toString()
 
     const bloguinhos = helper.initialBlogs.map(b => ({
