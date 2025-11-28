@@ -21,7 +21,7 @@ describe('requesting all the blog posts', () => {
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
-    
+
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 })
@@ -76,16 +76,16 @@ describe('requesting a new blog post', () => {
       url: 'http://www.joramado.com.br',
       user: users[0].id
     }
-    
+
     const us = {
       username: 'Beta Tester',
       password: 'password'
     }
-    
+
     const loginUser = await api
       .post('/api/login')
       .send(us)
-    
+
     await api
       .post('/api/blogs')
       .set('Authorization', `Bearer ${loginUser.body.token}`)
@@ -132,16 +132,16 @@ describe('requesting a new blog post', () => {
       url: 'http://www.joramado.com.br',
       user: users[0].id
     }
-    
+
     const us = {
       username: 'Wrong Tester',
       password: 'password'
     }
-    
+
     const loginUser = await api
       .post('/api/login')
       .send(us)
-    
+
     await api
       .post('/api/blogs')
       .set('Authorization', `Bearer ${loginUser.body.token}`)
