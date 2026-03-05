@@ -1,23 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [notif, setNotif] = useState(null,Boolean)
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [notif, setNotif] = useState(null, Boolean)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const blogFormRef = useRef()
 
   const hook = () => {
-    blogService
-      .getAll()
-      .then(blogs =>
-        setBlogs(blogs)
-    )  
+    blogService.getAll().then(blogs => {
+      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+      setBlogs(sortedBlogs)
+    })
   }
   useEffect(hook, [])
 
@@ -31,7 +33,7 @@ const App = () => {
   }, [])
 
   const showNotification = (message, isErr) => {
-    setNotif({message, isErr})
+    setNotif({ message, isErr })
     console.log('Notification:', message, notif, isErr)
     setTimeout(() => {
       setNotif(null)
@@ -40,51 +42,48 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
     try {
       const user = await loginService
-        .login({ 
-          username, password 
+        .login({
+          username, password
         })
+
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
+
       blogService.setToken(user.token)
-      setUser(user) // Token
+
+      setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setNotif(exception.response.data.error)
-      setTimeout(() => {
-        setNotif(null)
-      }, 5000)
+    } catch {
+      showNotification('wrong username or password', true)
     }
   }
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        <label>
-          username
-          <input
-            type="text"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          password
-          <input
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </label>
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <Togglable buttonLabel='login'>
+      <LoginForm
+        username={username}
+        password={password}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+        handleSubmit={handleLogin}
+      />
+    </Togglable>
+  )
+
+  const blogForm = () => (
+    <Togglable buttonLabel="new blog" ref={blogFormRef}>
+      <BlogForm
+        showNotification={showNotification}
+        blogRef={blogFormRef}
+        setBlogs={setBlogs}
+        currentBlogs={blogs}
+        currentUser={user.username}
+      />
+    </Togglable>
   )
 
   const handleLogout = () => {
@@ -93,30 +92,36 @@ const App = () => {
     window.location.reload()
   }
 
-  if (user === null) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <Notification notif={notif} />
-        {loginForm()}
-      </div>
-    )
+  const handleBlogDelete = (id) => {
+    setBlogs(blogs.filter(blog => blog.id !== id))
   }
-  
+
   return (
     <div>
-      <h2>blogs</h2>
-      <Notification notif={notif} />
+      {user === null ?
+        <div>
+          <h2>Log in to application</h2>
+          <Notification notif={notif} />
+          {loginForm()}
+        </div> :
+        <div>
+          <h2>blogs</h2>
+          <Notification notif={notif} />
 
-      <p>{user.username} logged in <button onClick={handleLogout}>logout</button></p>
+          <p>{user.username} logged in <button onClick={handleLogout}>logout</button></p>
 
-      <h2>Create New</h2>
-      <BlogForm showNotification={showNotification} />
-      {console.log('socorro',notif)}
-
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+          <h2>Create New</h2>
+          {blogForm()}
+          {blogs.map(blog =>
+            <Blog
+              key={blog.id}
+              blog={blog}
+              user={user}
+              onDelete={handleBlogDelete}
+            />
+          )}
+        </div>
+      }
     </div>
   )
 }
